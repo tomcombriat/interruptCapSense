@@ -1,38 +1,56 @@
+/*
+Combriat 2020
+
+A simple example to demonstrate the use of the interruptCapSense library.
+
+As interrupts need to be global, they are defined outside the library (this is a bit hacky, but maybe less than an integrated solution). Thus, one interrupt function has to be define for each sensor, and then linked to it.
+
+Wiring:                      ----------  
+                             |         |
+   send_pin -------- R ------|  foil   |
+                          |  |         |
+                          |  ----------  
+                          |
+                          |
+  receive_pin-------------
+
+
+
+R should be chosen quite big, and depending on the system and desired range. Values between 1Mohm and 40Mohms should be useful.
+
+This obviously inspired by the CapSense library.
+
+*/
+
+#include <interruptCapSense.h>
+
 
 #define send_pin PB0
 #define receive_pin PA0
 
-volatile unsigned long last_tim;
-unsigned long tim = 0;
-
-void inter()
+interruptCapSense Sensor(send_pin, 20);
+void interrupt()
 {
-
-  last_tim = micros();
-
+  Sensor.ISR_target = micros();
 }
+
+
 
 void setup() {
   Serial.begin(250000);
-  pinMode(send_pin, OUTPUT);
   pinMode(receive_pin, INPUT);
-  attachInterrupt(digitalPinToInterrupt(receive_pin), inter, RISING);
+  attachInterrupt(digitalPinToInterrupt(receive_pin), interrupt, RISING);
+
+  Sensor.init();
 
 }
 
 void loop() {
-  delay(100);
-  digitalWrite(send_pin, LOW);
-  delay(100);
-  digitalWrite(send_pin, HIGH);
-  last_tim = 0;
-  tim = micros();
-  while (last_tim == 0 && micros() - tim < 200000)
+
+  if (Sensor.update())
   {
-    Serial.print("t ");
-    Serial.println(tim);
-
+    Serial.print(millis());
+    Serial.print(" ");
+    Serial.println(Sensor.getAverage());
   }
-  Serial.println(last_tim - tim);
-
 }
