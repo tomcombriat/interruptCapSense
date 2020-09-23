@@ -1,0 +1,6 @@
+interruptCapSense	KEYWORD1
+init			KEYWORD2
+update			KEYWORD2
+getCumul		KEYWORD2
+getAverage		KEYWORD2
+ISR_target		KEYWORD2

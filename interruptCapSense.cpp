@@ -36,7 +36,7 @@ bool interruptCapSense::update()
       break;
       
     case 1:  // waiting for the ISR to fire
-      if (ISR_target != 0)
+      if (ISR_target != 0 && ISR_target > last_timing)
 	{
 	  times[runner] = ISR_target - last_timing;
 	  runner += 1;
@@ -60,4 +60,25 @@ bool interruptCapSense::update()
       
     }
   return ret;
+}
+
+
+unsigned long interruptCapSense::getCumul()
+{
+  unsigned long sum = 0;
+  for (int i=0; i<samples; i++) sum += times[i];
+  return sum;
+}
+
+float interruptCapSense::getAverage()
+{
+  float aver = 0.;
+  for (int i=0; i<samples; i++) aver += times[i];
+  aver = aver *1./samples;
+  return aver;
+}
+
+void interruptCapSense::init()
+{
+  while(times[samples-1] == 0) update();
 }
