@@ -25,8 +25,8 @@ This obviously inspired by the CapSense library.
 #include <interruptCapSense.h>
 
 
-#define send_pin PB0
-#define receive_pin PA0
+#define send_pin PB0  // any digital pin
+#define receive_pin PA0  // should be a interrupt compatible pin (digital)
 
 interruptCapSense Sensor(send_pin, 20);
 void interrupt()
