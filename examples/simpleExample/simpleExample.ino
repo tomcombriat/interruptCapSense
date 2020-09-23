@@ -41,7 +41,7 @@ void setup() {
   pinMode(receive_pin, INPUT);
   attachInterrupt(digitalPinToInterrupt(receive_pin), interrupt, RISING);
 
-  Sensor.init();
+  Sensor.init();  // needed for the sensor to get the first values for the rolling average.
 
 }
 
@@ -49,7 +49,7 @@ void loop() {
 
   if (Sensor.update())
   {
-    Serial.print(millis());
+    Serial.print(Sensor.getCumul());  // if you do not want to deal with floats. Beware of overflows!
     Serial.print(" ");
     Serial.println(Sensor.getAverage());
   }
