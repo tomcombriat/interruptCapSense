@@ -10,8 +10,8 @@ interruptCapSense::interruptCapSense(int _sendPin, const int _samples, unsigned 
 {
   samples = _samples;
   sendPin = _sendPin;
-  timout = _timout;
-  delay = _delay;
+  timout = _timout;  // max time allowed
+  delay = _delay;  // delay to come back to initial state (unload the cap)
   times = new unsigned long[samples];
   pinMode(sendPin, OUTPUT);
   for (int i=0; i<samples;i++) times[i] = 0;
@@ -48,6 +48,10 @@ bool interruptCapSense::update()
 	}
       else if (micros() - last_timing > timout)
 	{
+	  times[runner] = timout;
+	  runner += 1;
+	  if (runner == samples) runner = 0;
+	  ret = true;
 	  state +=1;
 	  digitalWrite(sendPin, LOW);
 	  last_timing = micros();
